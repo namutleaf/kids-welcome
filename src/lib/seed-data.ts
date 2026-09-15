@@ -65,6 +65,20 @@ export const SEED_PLACES: SeedPlace[] = [
     kidsFunLevel: "okay",
     parking: "none",
     parkingNote: "인근 공영주차장 도보 5분",
+    reviews: [
+      {
+        authorName: "윤지맘",
+        rating: 4,
+        childAge: "2세",
+        content: "산책하다가 아이가 피곤해하길래 들어갔는데 아이스크림 주니까 기분 좋아했어요. 포장해서 근처 돌담길에서 먹으니 분위기 있음.",
+      },
+      {
+        authorName: "현우아빠",
+        rating: 4,
+        childAge: "3세",
+        content: "주중 오전에 가면 한산해요. 사람이 많아서 그런지 좌석은 별로지만 가게 아저씨가 친절합니다.",
+      },
+    ],
   },
   {
     neighborhoodId: "haebangchon",
@@ -81,6 +95,14 @@ export const SEED_PLACES: SeedPlace[] = [
     kidsFunLevel: "okay",
     parking: "none",
     parkingNote: "경사로가 많아 유아차는 큰길 쪽 입구 이용 권장",
+    reviews: [
+      {
+        authorName: "소은맘",
+        rating: 5,
+        childAge: "1세",
+        content: "루프탑에서 남산이 보여서 정말 좋았어요. 아이도 창문을 통해 경치를 구경하며 즐거워했습니다.",
+      },
+    ],
   },
   {
     neighborhoodId: "seongsu",

@@ -69,9 +69,9 @@ export default async function NeighborhoodPage({
           </p>
         </div>
       ) : (
-        <div className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-6 space-y-3">
           {places.map((place) => (
-            <PlaceCard key={place.id} place={place} />
+            <PlaceCard key={place.id} place={place} feedStyle />
           ))}
         </div>
       )}
