@@ -25,7 +25,6 @@ interface Draft {
   description: string;
   kidsChair: TriState;
   atmosphere: Atmosphere;
-  noKidsZone: boolean;
   activities: string;
   kidsFood: TriState;
   kidsFoodNote: string;
@@ -53,7 +52,6 @@ type Step =
       noteKey?: "kidsFoodNote" | "parkingNote";
       notePlaceholder?: string;
     }
-  | { kind: "noKidsZone"; question: string }
   | { kind: "review" };
 
 const STEPS: Step[] = [
@@ -74,7 +72,6 @@ const STEPS: Step[] = [
     question: "😊 아이랑 가면 눈치가 보이나요?",
     options: (Object.keys(ATMOSPHERE_LABEL) as Atmosphere[]).map((v) => ({ value: v, label: ATMOSPHERE_LABEL[v] })),
   },
-  { kind: "noKidsZone", question: "🚫 이 곳은 노키즈존인가요?" },
   { kind: "text", key: "activities", question: "🎉 아이가 즐길 거리가 있나요?", placeholder: "예: 마당에서 뛰어놀기, 키즈존, 근처 공원 산책" },
   {
     kind: "choice",
@@ -113,7 +110,6 @@ export default function PlaceForm({ defaultNeighborhoodId }: { defaultNeighborho
     description: "",
     kidsChair: "unknown",
     atmosphere: "neutral",
-    noKidsZone: false,
     activities: "",
     kidsFood: "unknown",
     kidsFoodNote: "",
@@ -172,7 +168,6 @@ export default function PlaceForm({ defaultNeighborhoodId }: { defaultNeighborho
       <input type="hidden" name="kidsFood" value={draft.kidsFood} />
       <input type="hidden" name="kidsFunLevel" value={draft.kidsFunLevel} />
       <input type="hidden" name="parking" value={draft.parking} />
-      {draft.noKidsZone ? <input type="hidden" name="noKidsZone" value="on" /> : null}
 
       <div ref={stepRef} className="min-h-[320px] pt-8">
         {STEPS.map((s, i) => (
@@ -270,28 +265,6 @@ export default function PlaceForm({ defaultNeighborhoodId }: { defaultNeighborho
               </fieldset>
             ) : null}
 
-            {s.kind === "noKidsZone" ? (
-              <fieldset>
-                <legend className="text-xl font-bold text-stone-800 dark:text-stone-100">
-                  {s.question}
-                </legend>
-                <div className="mt-5 space-y-2">
-                  <span data-first-option="">
-                    <WizardOption
-                      selected={draft.noKidsZone === false}
-                      label="아니요"
-                      onSelect={() => update("noKidsZone", false)}
-                    />
-                  </span>
-                  <WizardOption
-                    selected={draft.noKidsZone === true}
-                    label="네, 노키즈존이에요"
-                    onSelect={() => update("noKidsZone", true)}
-                  />
-                </div>
-              </fieldset>
-            ) : null}
-
             {s.kind === "review" ? (
               <div>
                 <h2 className="text-xl font-bold text-stone-800 dark:text-stone-100">
@@ -304,7 +277,6 @@ export default function PlaceForm({ defaultNeighborhoodId }: { defaultNeighborho
                   <Row label="주소" value={draft.address || "미입력"} />
                   <Row label="아기의자" value={TRI_STATE_LABEL[draft.kidsChair]} />
                   <Row label="분위기" value={ATMOSPHERE_LABEL[draft.atmosphere]} />
-                  <Row label="노키즈존" value={draft.noKidsZone ? "네" : "아니요"} />
                   <Row label="아이 먹거리" value={TRI_STATE_LABEL[draft.kidsFood]} />
                   <Row label="주차" value={PARKING_LABEL[draft.parking]} />
                 </dl>

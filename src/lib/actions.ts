@@ -18,7 +18,6 @@ const placeSchema = z.object({
   description: z.string().trim().max(1000).optional().default(""),
   kidsChair: z.enum(["yes", "no", "unknown"]).default("unknown"),
   atmosphere: z.enum(["welcoming", "neutral", "awkward"]).default("neutral"),
-  noKidsZone: z.enum(["on"]).optional(),
   activities: z.string().trim().max(500).optional().default(""),
   kidsFood: z.enum(["yes", "no", "unknown"]).default("unknown"),
   kidsFoodNote: z.string().trim().max(300).optional().default(""),
@@ -51,12 +50,12 @@ export async function createPlace(
       `
       INSERT INTO places (
         neighborhood_id, name, category, address, description,
-        kids_chair, atmosphere, no_kids_zone, activities,
+        kids_chair, atmosphere, activities,
         kids_food, kids_food_note, kids_fun_level, parking, parking_note,
         submitted_by, created_at
       ) VALUES (
         @neighborhoodId, @name, @category, @address, @description,
-        @kidsChair, @atmosphere, @noKidsZone, @activities,
+        @kidsChair, @atmosphere, @activities,
         @kidsFood, @kidsFoodNote, @kidsFunLevel, @parking, @parkingNote,
         @submittedBy, @createdAt
       )
@@ -70,7 +69,6 @@ export async function createPlace(
       description: data.description ?? "",
       kidsChair: data.kidsChair,
       atmosphere: data.atmosphere,
-      noKidsZone: data.noKidsZone === "on" ? 1 : 0,
       activities: data.activities ?? "",
       kidsFood: data.kidsFood,
       kidsFoodNote: data.kidsFoodNote ?? "",
