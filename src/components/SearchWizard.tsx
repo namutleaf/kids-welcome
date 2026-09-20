@@ -59,12 +59,11 @@ export default function SearchWizard() {
     el?.focus();
   }, [safeStep]);
 
-  function update<K extends keyof Draft>(key: K, value: Draft[K]) {
-    setDraft((d) => ({ ...d, [key]: value }));
-  }
-
-  function goNext() {
-    setStep((s) => Math.min(s + 1, steps.length - 1));
+  function selectAndAdvance<K extends keyof Draft>(key: K, value: Draft[K]) {
+    const newDraft = { ...draft, [key]: value };
+    setDraft(newDraft);
+    const newSteps = buildSteps(newDraft);
+    setStep((s) => Math.min(s + 1, newSteps.length - 1));
   }
   function goBack() {
     setStep((s) => Math.max(s - 1, 0));
@@ -100,14 +99,14 @@ export default function SearchWizard() {
                     <WizardOption
                       selected={draft[current.key] === n}
                       label={`${n}명`}
-                      onSelect={() => update(current.key, n)}
+                      onSelect={() => selectAndAdvance(current.key, n)}
                     />
                   </span>
                 ))}
                 <WizardOption
                   selected={draft[current.key] > current.options[current.options.length - 1]}
                   label={current.moreLabel}
-                  onSelect={() => update(current.key, current.options[current.options.length - 1] + 1)}
+                  onSelect={() => selectAndAdvance(current.key, current.options[current.options.length - 1] + 1)}
                 />
               </div>
             </fieldset>
@@ -124,7 +123,7 @@ export default function SearchWizard() {
                     <WizardOption
                       selected={draft[current.key] === opt.value}
                       label={opt.label}
-                      onSelect={() => update(current.key, opt.value)}
+                      onSelect={() => selectAndAdvance(current.key, opt.value)}
                     />
                   </span>
                 ))}
@@ -153,8 +152,8 @@ export default function SearchWizard() {
         </div>
       </div>
 
-      <div className="mt-8">
-        {current.kind === "review" ? (
+      {current.kind === "review" ? (
+        <div className="mt-8">
           <button
             type="button"
             onClick={handleSubmit}
@@ -162,16 +161,8 @@ export default function SearchWizard() {
           >
             결과 보기
           </button>
-        ) : (
-          <button
-            type="button"
-            onClick={goNext}
-            className="w-full rounded-full bg-amber-500 px-4 py-3.5 text-base font-semibold text-white hover:bg-amber-600"
-          >
-            다음
-          </button>
-        )}
-      </div>
+        </div>
+      ) : null}
     </div>
   );
 }
