@@ -22,16 +22,45 @@ const CHOICE_OPTIONS: { value: Draft["parking"]; label: string }[] = [
   { value: "any", label: "상관없어요" },
 ];
 
+const PERSON_ICON: Record<"adults" | "kids", string> = { adults: "🧑", kids: "🧒" };
+const CHOICE_ICON: Record<"parking" | "kidsChair" | "kidsFood", string> = {
+  parking: "🅿️",
+  kidsChair: "🪑",
+  kidsFood: "🍽️",
+};
+const CHOICE_CHIP_LABEL: Record<"parking" | "kidsChair" | "kidsFood", string> = {
+  parking: "주차",
+  kidsChair: "아기의자",
+  kidsFood: "먹거리",
+};
+
+function countOptionLabel(key: "adults" | "kids", n: number): string {
+  if (key === "kids" && n === 0) return "🙅 0명 (아이 없이)";
+  return `${PERSON_ICON[key].repeat(Math.min(n, 4))} ${n}명`;
+}
+
+function chipLabel(step: Step, draft: Draft): string | null {
+  if (step.kind === "count") {
+    const who = step.key === "adults" ? "어른" : "아이";
+    return `#${who} ${draft[step.key]}명`;
+  }
+  if (step.kind === "choice") {
+    const value = draft[step.key] === "need" ? "필요" : "상관없음";
+    return `#${CHOICE_CHIP_LABEL[step.key]} ${value}`;
+  }
+  return null;
+}
+
 function buildSteps(draft: Draft): Step[] {
   const steps: Step[] = [
     { kind: "count", key: "adults", question: "어른은 몇 명이에요?", options: [1, 2, 3, 4], moreLabel: "5명 이상" },
     { kind: "count", key: "kids", question: "아이는 몇 명이에요?", options: [0, 1, 2, 3], moreLabel: "4명 이상" },
-    { kind: "choice", key: "parking", question: "🅿️ 주차가 필요하세요?" },
+    { kind: "choice", key: "parking", question: "주차가 필요하세요?" },
   ];
   if (draft.kids > 0) {
     steps.push(
-      { kind: "choice", key: "kidsChair", question: "🪑 아기의자가 필요하세요?" },
-      { kind: "choice", key: "kidsFood", question: "🍽️ 아이 먹거리가 있으면 좋겠어요?" }
+      { kind: "choice", key: "kidsChair", question: "아기의자가 필요하세요?" },
+      { kind: "choice", key: "kidsFood", question: "아이 먹거리가 있으면 좋겠어요?" }
     );
   }
   steps.push({ kind: "review" });
@@ -52,6 +81,7 @@ export default function SearchWizard() {
   const steps = buildSteps(draft);
   const safeStep = Math.min(step, steps.length - 1);
   const current = steps[safeStep];
+  const chips = steps.slice(0, safeStep).map((s) => chipLabel(s, draft)).filter((c): c is string => c !== null);
 
   const stepRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -86,11 +116,27 @@ export default function SearchWizard() {
     <div>
       <WizardHeader step={safeStep} totalSteps={steps.length} onBack={goBack} />
 
+      {chips.length > 0 ? (
+        <div className="mt-4 flex flex-wrap gap-1.5">
+          {chips.map((chip) => (
+            <span
+              key={chip}
+              className="rounded-full bg-amber-100 px-2.5 py-1 text-xs font-semibold text-amber-800 dark:bg-amber-950/50 dark:text-amber-300"
+            >
+              {chip}
+            </span>
+          ))}
+        </div>
+      ) : null}
+
       <div ref={stepRef} className="min-h-[320px] pt-8">
         <div data-active="">
           {current.kind === "count" ? (
             <fieldset>
-              <legend className="text-xl font-bold text-stone-800 dark:text-stone-100">
+              <div className="text-5xl" aria-hidden>
+                {current.key === "adults" ? "🧑‍🤝‍🧑" : "🧒"}
+              </div>
+              <legend className="mt-3 text-xl font-bold text-stone-800 dark:text-stone-100">
                 {current.question}
               </legend>
               <div className="mt-5 grid grid-cols-2 gap-2 sm:grid-cols-3">
@@ -98,14 +144,14 @@ export default function SearchWizard() {
                   <span key={n} data-first-option={j === 0 ? "" : undefined}>
                     <WizardOption
                       selected={draft[current.key] === n}
-                      label={`${n}명`}
+                      label={countOptionLabel(current.key, n)}
                       onSelect={() => selectAndAdvance(current.key, n)}
                     />
                   </span>
                 ))}
                 <WizardOption
                   selected={draft[current.key] > current.options[current.options.length - 1]}
-                  label={current.moreLabel}
+                  label={`${PERSON_ICON[current.key].repeat(4)}+ ${current.moreLabel}`}
                   onSelect={() => selectAndAdvance(current.key, current.options[current.options.length - 1] + 1)}
                 />
               </div>
@@ -114,7 +160,10 @@ export default function SearchWizard() {
 
           {current.kind === "choice" ? (
             <fieldset>
-              <legend className="text-xl font-bold text-stone-800 dark:text-stone-100">
+              <div className="text-5xl" aria-hidden>
+                {CHOICE_ICON[current.key]}
+              </div>
+              <legend className="mt-3 text-xl font-bold text-stone-800 dark:text-stone-100">
                 {current.question}
               </legend>
               <div className="mt-5 space-y-2">
