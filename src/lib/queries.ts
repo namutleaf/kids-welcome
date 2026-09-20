@@ -89,14 +89,15 @@ export interface PlaceFilters {
   goodParking?: boolean;
 }
 
-export function getPlacesByNeighborhood(
-  neighborhoodId: string,
-  filters: PlaceFilters = {}
-): PlaceWithStats[] {
+function queryPlaces(neighborhoodId: string | undefined, filters: PlaceFilters): PlaceWithStats[] {
   const db = getDb();
-  const conditions: string[] = ["p.neighborhood_id = @neighborhoodId"];
-  const params: Record<string, unknown> = { neighborhoodId };
+  const conditions: string[] = [];
+  const params: Record<string, unknown> = {};
 
+  if (neighborhoodId) {
+    conditions.push("p.neighborhood_id = @neighborhoodId");
+    params.neighborhoodId = neighborhoodId;
+  }
   if (filters.kidsChair) {
     conditions.push("p.kids_chair = 'yes'");
   }
@@ -110,6 +111,8 @@ export function getPlacesByNeighborhood(
     conditions.push("p.parking IN ('good', 'ok')");
   }
 
+  const whereClause = conditions.length > 0 ? `WHERE ${conditions.join(" AND ")}` : "";
+
   const rows = db
     .prepare(
       `
@@ -118,7 +121,7 @@ export function getPlacesByNeighborhood(
         AVG(r.rating) as avg_rating
       FROM places p
       LEFT JOIN reviews r ON r.place_id = p.id
-      WHERE ${conditions.join(" AND ")}
+      ${whereClause}
       GROUP BY p.id
       ORDER BY p.created_at DESC
       `
@@ -130,6 +133,17 @@ export function getPlacesByNeighborhood(
     reviewCount: row.review_count,
     avgRating: row.avg_rating,
   }));
+}
+
+export function getPlacesByNeighborhood(
+  neighborhoodId: string,
+  filters: PlaceFilters = {}
+): PlaceWithStats[] {
+  return queryPlaces(neighborhoodId, filters);
+}
+
+export function searchPlaces(filters: PlaceFilters = {}): PlaceWithStats[] {
+  return queryPlaces(undefined, filters);
 }
 
 export function getPlaceById(id: number): PlaceWithStats | undefined {

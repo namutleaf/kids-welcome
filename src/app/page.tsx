@@ -19,12 +19,20 @@ export default async function HomePage() {
           아기의자, 노키즈존 여부, 주차, 즐길거리까지 — 행정동이 아니라 서촌, 성수/서울숲처럼
           실제로 부르는 동네 이름으로 찾아요.
         </p>
-        <Link
-          href="/places/new"
-          className="mt-5 inline-block rounded-full bg-amber-500 px-6 py-2.5 font-semibold text-white shadow-sm hover:bg-amber-600"
-        >
-          우리 동네 장소 제보하기
-        </Link>
+        <div className="mt-6 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
+          <Link
+            href="/search"
+            className="inline-flex items-center gap-2 rounded-full bg-amber-600 px-8 py-3.5 text-base font-bold text-white shadow-md hover:bg-amber-700"
+          >
+            🔍 딱 맞는 곳 찾기
+          </Link>
+          <Link
+            href="/places/new"
+            className="inline-block rounded-full border border-amber-300 px-6 py-2.5 font-semibold text-amber-700 hover:bg-amber-50 dark:border-amber-800 dark:text-amber-300 dark:hover:bg-amber-950/40"
+          >
+            우리 동네 장소 제보하기
+          </Link>
+        </div>
       </section>
 
       <section className="mt-12">
