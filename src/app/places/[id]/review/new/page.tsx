@@ -17,7 +17,7 @@ export default async function NewReviewPage({
     <div className="mx-auto max-w-2xl px-4 py-8">
       <Link
         href={`/places/${place.id}`}
-        className="text-sm text-amber-700 hover:underline dark:text-amber-400"
+        className="text-sm text-teal-700 hover:underline dark:text-teal-400"
       >
         ← {place.name}으로 돌아가기
       </Link>

@@ -19,7 +19,7 @@ export default async function SearchResultsPage({
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-8">
-      <Link href="/search" className="text-sm text-amber-700 hover:underline dark:text-amber-400">
+      <Link href="/search" className="text-sm text-teal-700 hover:underline dark:text-teal-400">
         ← 조건 다시 설정하기
       </Link>
 
@@ -29,11 +29,11 @@ export default async function SearchResultsPage({
       </p>
 
       {places.length === 0 ? (
-        <div className="mt-10 rounded-2xl border border-dashed border-amber-300 p-10 text-center text-stone-500 dark:border-amber-900/50">
+        <div className="mt-10 rounded-2xl border border-dashed border-teal-300 p-10 text-center text-stone-500 dark:border-teal-900/50">
           <p>조건에 맞는 장소가 아직 없어요.</p>
           <Link
             href="/search"
-            className="mt-2 inline-block text-amber-700 underline dark:text-amber-400"
+            className="mt-2 inline-block text-teal-700 underline dark:text-teal-400"
           >
             조건을 다시 설정해보세요
           </Link>

@@ -31,7 +31,7 @@ export default async function PlaceDetailPage({ params }: PageProps<"/places/[id
       {neighborhood ? (
         <Link
           href={`/neighborhoods/${neighborhood.id}`}
-          className="text-sm text-amber-700 hover:underline dark:text-amber-400"
+          className="text-sm text-teal-700 hover:underline dark:text-teal-400"
         >
           ← {neighborhood.name} 목록으로
         </Link>
@@ -64,7 +64,7 @@ export default async function PlaceDetailPage({ params }: PageProps<"/places/[id
         </p>
       ) : null}
 
-      <dl className="mt-6 grid grid-cols-1 gap-4 rounded-2xl border border-amber-200/70 bg-white p-5 sm:grid-cols-2 dark:border-amber-900/40 dark:bg-[#2a2019]">
+      <dl className="mt-6 grid grid-cols-1 gap-4 rounded-2xl border border-teal-200/70 bg-white p-5 sm:grid-cols-2 dark:border-teal-900/40 dark:bg-[#163431]">
         <div>
           <dt className="text-xs font-semibold text-stone-500">🎉 즐길거리</dt>
           <dd className="mt-1 text-sm text-stone-700 dark:text-stone-300">
@@ -98,14 +98,14 @@ export default async function PlaceDetailPage({ params }: PageProps<"/places/[id
           </h2>
           <Link
             href={`/places/${place.id}/review/new`}
-            className="rounded-full bg-amber-500 px-4 py-2 text-sm font-semibold text-white hover:bg-amber-600"
+            className="rounded-full bg-teal-500 px-4 py-2 text-sm font-semibold text-white hover:bg-teal-600"
           >
             후기 남기기
           </Link>
         </div>
 
         {reviews.length === 0 ? (
-          <p className="mt-4 rounded-2xl border border-dashed border-amber-300 p-6 text-center text-sm text-stone-500 dark:border-amber-900/50">
+          <p className="mt-4 rounded-2xl border border-dashed border-teal-300 p-6 text-center text-sm text-stone-500 dark:border-teal-900/50">
             아직 후기가 없어요. 첫 방문 후기를 남겨주세요!
           </p>
         ) : (
@@ -113,7 +113,7 @@ export default async function PlaceDetailPage({ params }: PageProps<"/places/[id
             {reviews.map((review) => (
               <li
                 key={review.id}
-                className="rounded-2xl border border-amber-200/70 bg-white p-4 dark:border-amber-900/40 dark:bg-[#2a2019]"
+                className="rounded-2xl border border-teal-200/70 bg-white p-4 dark:border-teal-900/40 dark:bg-[#163431]"
               >
                 <div className="flex items-center justify-between text-sm">
                   <span className="font-semibold text-stone-700 dark:text-stone-200">
@@ -124,7 +124,7 @@ export default async function PlaceDetailPage({ params }: PageProps<"/places/[id
                       </span>
                     ) : null}
                   </span>
-                  <span aria-hidden className="text-amber-500">
+                  <span aria-hidden className="text-teal-500">
                     {"★".repeat(review.rating)}
                     {"☆".repeat(5 - review.rating)}
                   </span>

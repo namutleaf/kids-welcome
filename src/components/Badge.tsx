@@ -2,7 +2,7 @@ type Tone = "good" | "warn" | "bad" | "neutral";
 
 const TONE_CLASSES: Record<Tone, string> = {
   good: "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-200",
-  warn: "bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-200",
+  warn: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/40 dark:text-yellow-200",
   bad: "bg-rose-100 text-rose-800 dark:bg-rose-900/40 dark:text-rose-200",
   neutral: "bg-stone-100 text-stone-700 dark:bg-stone-800 dark:text-stone-300",
 };

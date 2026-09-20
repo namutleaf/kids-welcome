@@ -93,7 +93,7 @@ export default function ReviewForm({ placeId }: { placeId: number }) {
                     >
                       <span
                         aria-hidden
-                        className={value <= draft.rating ? "text-amber-500" : "text-stone-300"}
+                        className={value <= draft.rating ? "text-teal-500" : "text-stone-300"}
                       >
                         ★
                       </span>
@@ -121,7 +121,7 @@ export default function ReviewForm({ placeId }: { placeId: number }) {
                   value={draft.content}
                   onChange={(e) => setDraft((d) => ({ ...d, content: e.target.value }))}
                   placeholder="아이와 방문했던 경험을 공유해주세요"
-                  className="mt-5 w-full rounded-xl border-2 border-stone-200 bg-white px-4 py-3 text-base dark:border-stone-700 dark:bg-[#2a2019]"
+                  className="mt-5 w-full rounded-xl border-2 border-stone-200 bg-white px-4 py-3 text-base dark:border-stone-700 dark:bg-[#163431]"
                 />
               </div>
             ) : null}
@@ -141,7 +141,7 @@ export default function ReviewForm({ placeId }: { placeId: number }) {
                   value={draft.authorName}
                   onChange={(e) => setDraft((d) => ({ ...d, authorName: e.target.value }))}
                   placeholder="입력 안 하면 '익명'으로 표시돼요"
-                  className="mt-5 w-full rounded-xl border-2 border-stone-200 bg-white px-4 py-3 text-base dark:border-stone-700 dark:bg-[#2a2019]"
+                  className="mt-5 w-full rounded-xl border-2 border-stone-200 bg-white px-4 py-3 text-base dark:border-stone-700 dark:bg-[#163431]"
                 />
                 <p className="mt-2 text-xs text-stone-400">몰라도 괜찮아요, 비워두고 넘어가도 돼요</p>
               </div>
@@ -162,7 +162,7 @@ export default function ReviewForm({ placeId }: { placeId: number }) {
                   value={draft.childAge}
                   onChange={(e) => setDraft((d) => ({ ...d, childAge: e.target.value }))}
                   placeholder="예: 24개월, 5세"
-                  className="mt-5 w-full rounded-xl border-2 border-stone-200 bg-white px-4 py-3 text-base dark:border-stone-700 dark:bg-[#2a2019]"
+                  className="mt-5 w-full rounded-xl border-2 border-stone-200 bg-white px-4 py-3 text-base dark:border-stone-700 dark:bg-[#163431]"
                 />
                 <p className="mt-2 text-xs text-stone-400">몰라도 괜찮아요, 비워두고 넘어가도 돼요</p>
               </div>
@@ -176,7 +176,7 @@ export default function ReviewForm({ placeId }: { placeId: number }) {
                 <dl className="mt-5 space-y-3 rounded-2xl border border-stone-200 p-4 text-sm dark:border-stone-700">
                   <div className="flex items-baseline justify-between gap-3">
                     <dt className="text-stone-500">별점</dt>
-                    <dd aria-hidden className="text-amber-500">
+                    <dd aria-hidden className="text-teal-500">
                       {"★".repeat(draft.rating)}
                       {"☆".repeat(5 - draft.rating)}
                     </dd>
@@ -206,7 +206,7 @@ export default function ReviewForm({ placeId }: { placeId: number }) {
             key="submit"
             type="submit"
             disabled={pending}
-            className="w-full rounded-full bg-amber-500 px-4 py-3.5 text-base font-semibold text-white hover:bg-amber-600 disabled:opacity-60"
+            className="w-full rounded-full bg-teal-500 px-4 py-3.5 text-base font-semibold text-white hover:bg-teal-600 disabled:opacity-60"
           >
             {pending ? "등록 중..." : "후기 등록하기"}
           </button>
@@ -219,7 +219,7 @@ export default function ReviewForm({ placeId }: { placeId: number }) {
               goNext();
             }}
             disabled={!isValid}
-            className="w-full rounded-full bg-amber-500 px-4 py-3.5 text-base font-semibold text-white hover:bg-amber-600 disabled:cursor-not-allowed disabled:opacity-40"
+            className="w-full rounded-full bg-teal-500 px-4 py-3.5 text-base font-semibold text-white hover:bg-teal-600 disabled:cursor-not-allowed disabled:opacity-40"
           >
             다음
           </button>

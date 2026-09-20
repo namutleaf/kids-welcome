@@ -23,7 +23,7 @@ export function WizardHeader({
       </button>
       <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-stone-200 dark:bg-stone-700">
         <div
-          className="h-full rounded-full bg-amber-500 transition-all duration-300"
+          className="h-full rounded-full bg-teal-500 transition-all duration-300"
           style={{ width: `${((step + 1) / totalSteps) * 100}%` }}
         />
       </div>
@@ -39,30 +39,38 @@ export function WizardOption({
   label,
   hint,
   onSelect,
+  center = false,
 }: {
   selected: boolean;
   label: string;
   hint?: string;
   onSelect: () => void;
+  center?: boolean;
 }) {
   return (
     <button
       type="button"
       onClick={onSelect}
-      className={`w-full rounded-2xl border-2 px-4 py-3.5 text-left transition-colors ${
+      className={`w-full rounded-2xl border-2 px-4 py-3.5 transition-all duration-150 ${
+        center ? "text-center" : "text-left"
+      } ${
         selected
-          ? "border-amber-500 bg-amber-50 dark:bg-amber-950/40"
-          : "border-stone-200 hover:border-stone-300 dark:border-stone-700 dark:hover:border-stone-600"
+          ? "border-teal-600 bg-teal-600 shadow-md shadow-teal-600/20"
+          : "border-stone-200 hover:border-teal-300 hover:bg-teal-50/60 dark:border-stone-700 dark:hover:border-teal-700 dark:hover:bg-teal-950/20"
       }`}
     >
       <span
         className={`block text-sm font-semibold ${
-          selected ? "text-amber-800 dark:text-amber-200" : "text-stone-700 dark:text-stone-200"
+          selected ? "text-white" : "text-stone-700 dark:text-stone-200"
         }`}
       >
         {label}
       </span>
-      {hint ? <span className="mt-0.5 block text-xs text-stone-500">{hint}</span> : null}
+      {hint ? (
+        <span className={`mt-0.5 block text-xs ${selected ? "text-teal-50/90" : "text-stone-500"}`}>
+          {hint}
+        </span>
+      ) : null}
     </button>
   );
 }

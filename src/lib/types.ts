@@ -32,6 +32,7 @@ export interface Neighborhood {
   id: string;
   name: string;
   tagline: string;
+  icon: string;
   sortOrder: number;
 }
 

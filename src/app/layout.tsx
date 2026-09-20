@@ -26,20 +26,20 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
-        <header className="border-b border-amber-200/70 bg-white/80 backdrop-blur sticky top-0 z-10 dark:bg-[#221a14]/80 dark:border-amber-900/40">
+        <header className="border-b border-teal-200/70 bg-white/80 backdrop-blur sticky top-0 z-10 dark:bg-[#102220]/80 dark:border-teal-900/40">
           <div className="mx-auto max-w-5xl px-4 py-3 flex items-center justify-between gap-4">
             <Link href="/" className="flex items-center gap-2 shrink-0">
               <span className="text-2xl" aria-hidden>
                 🧸
               </span>
-              <span className="text-lg font-bold text-amber-800 dark:text-amber-200">
+              <span className="text-lg font-bold text-teal-800 dark:text-teal-200">
                 아이랑어디가
               </span>
             </Link>
             <nav className="flex items-center gap-3 text-sm">
               <Link
                 href="/places/new"
-                className="rounded-full bg-amber-500 px-4 py-2 font-semibold text-white hover:bg-amber-600 transition-colors"
+                className="rounded-full bg-teal-500 px-4 py-2 font-semibold text-white hover:bg-teal-600 transition-colors"
               >
                 장소 제보하기
               </Link>
@@ -47,7 +47,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           </div>
         </header>
         <main className="flex-1">{children}</main>
-        <footer className="border-t border-amber-200/70 py-6 text-center text-xs text-amber-800/70 dark:border-amber-900/40 dark:text-amber-200/60">
+        <footer className="border-t border-teal-200/70 py-6 text-center text-xs text-teal-800/70 dark:border-teal-900/40 dark:text-teal-200/60">
           아이랑어디가 · 이용자들이 직접 채워가는 아이 동반 장소 정보
         </footer>
       </body>

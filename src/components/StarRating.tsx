@@ -13,7 +13,7 @@ export default function StarRating({
 
   return (
     <span className="inline-flex items-center gap-1 text-sm">
-      <span aria-hidden className="text-amber-500">
+      <span aria-hidden className="text-yellow-400">
         {"★".repeat(Math.round(rounded))}
         {"☆".repeat(5 - Math.round(rounded))}
       </span>

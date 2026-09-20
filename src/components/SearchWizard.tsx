@@ -22,7 +22,7 @@ const CHOICE_OPTIONS: { value: Draft["parking"]; label: string }[] = [
   { value: "any", label: "상관없어요" },
 ];
 
-const PERSON_ICON: Record<"adults" | "kids", string> = { adults: "🧑", kids: "🧒" };
+const COUNT_ICON: Record<"adults" | "kids", string> = { adults: "🧑‍🤝‍🧑", kids: "🧒" };
 const CHOICE_ICON: Record<"parking" | "kidsChair" | "kidsFood", string> = {
   parking: "🅿️",
   kidsChair: "🪑",
@@ -35,8 +35,8 @@ const CHOICE_CHIP_LABEL: Record<"parking" | "kidsChair" | "kidsFood", string> = 
 };
 
 function countOptionLabel(key: "adults" | "kids", n: number): string {
-  if (key === "kids" && n === 0) return "🙅 0명 (아이 없이)";
-  return `${PERSON_ICON[key].repeat(Math.min(n, 4))} ${n}명`;
+  if (key === "kids" && n === 0) return "0명";
+  return `${n}명`;
 }
 
 function chipLabel(step: Step, draft: Draft): string | null {
@@ -121,7 +121,7 @@ export default function SearchWizard() {
           {chips.map((chip) => (
             <span
               key={chip}
-              className="rounded-full bg-amber-100 px-2.5 py-1 text-xs font-semibold text-amber-800 dark:bg-amber-950/50 dark:text-amber-300"
+              className="rounded-full bg-teal-100 px-2.5 py-1 text-xs font-semibold text-teal-800 dark:bg-teal-950/50 dark:text-teal-300"
             >
               {chip}
             </span>
@@ -132,26 +132,30 @@ export default function SearchWizard() {
       <div ref={stepRef} className="min-h-[320px] pt-8">
         <div data-active="">
           {current.kind === "count" ? (
-            <fieldset>
+            <fieldset className="text-center">
               <div className="text-5xl" aria-hidden>
-                {current.key === "adults" ? "🧑‍🤝‍🧑" : "🧒"}
+                {COUNT_ICON[current.key]}
               </div>
-              <legend className="mt-3 text-xl font-bold text-stone-800 dark:text-stone-100">
+              <legend className="mx-auto mt-3 text-xl font-bold text-stone-800 dark:text-stone-100">
                 {current.question}
               </legend>
-              <div className="mt-5 grid grid-cols-2 gap-2 sm:grid-cols-3">
+              <div className="mt-6 grid grid-cols-4 gap-2">
                 {current.options.map((n, j) => (
                   <span key={n} data-first-option={j === 0 ? "" : undefined}>
                     <WizardOption
+                      center
                       selected={draft[current.key] === n}
                       label={countOptionLabel(current.key, n)}
                       onSelect={() => selectAndAdvance(current.key, n)}
                     />
                   </span>
                 ))}
+              </div>
+              <div className="mt-2">
                 <WizardOption
+                  center
                   selected={draft[current.key] > current.options[current.options.length - 1]}
-                  label={`${PERSON_ICON[current.key].repeat(4)}+ ${current.moreLabel}`}
+                  label={current.moreLabel}
                   onSelect={() => selectAndAdvance(current.key, current.options[current.options.length - 1] + 1)}
                 />
               </div>
@@ -159,17 +163,18 @@ export default function SearchWizard() {
           ) : null}
 
           {current.kind === "choice" ? (
-            <fieldset>
+            <fieldset className="text-center">
               <div className="text-5xl" aria-hidden>
                 {CHOICE_ICON[current.key]}
               </div>
-              <legend className="mt-3 text-xl font-bold text-stone-800 dark:text-stone-100">
+              <legend className="mx-auto mt-3 text-xl font-bold text-stone-800 dark:text-stone-100">
                 {current.question}
               </legend>
-              <div className="mt-5 space-y-2">
+              <div className="mt-6 space-y-2">
                 {CHOICE_OPTIONS.map((opt, j) => (
                   <span key={opt.value} data-first-option={j === 0 ? "" : undefined}>
                     <WizardOption
+                      center
                       selected={draft[current.key] === opt.value}
                       label={opt.label}
                       onSelect={() => selectAndAdvance(current.key, opt.value)}
@@ -206,7 +211,7 @@ export default function SearchWizard() {
           <button
             type="button"
             onClick={handleSubmit}
-            className="w-full rounded-full bg-amber-500 px-4 py-3.5 text-base font-semibold text-white hover:bg-amber-600"
+            className="w-full rounded-full bg-teal-500 px-4 py-3.5 text-base font-semibold text-white hover:bg-teal-600"
           >
             결과 보기
           </button>

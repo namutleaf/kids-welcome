@@ -21,7 +21,7 @@ export default function PlaceCard({
     return (
       <Link
         href={`/places/${place.id}`}
-        className="block rounded-2xl border border-amber-200/70 bg-white p-4 shadow-sm transition-shadow hover:shadow-md dark:border-amber-900/40 dark:bg-[#2a2019]"
+        className="block rounded-2xl border border-stone-200/70 bg-white p-4 shadow-sm transition-all duration-150 hover:-translate-y-0.5 hover:border-teal-300 hover:shadow-lg dark:border-stone-700/60 dark:bg-[#163431] dark:hover:border-teal-700"
       >
         <div className="flex items-start gap-4">
           <div className="flex-1">
@@ -60,7 +60,7 @@ export default function PlaceCard({
   return (
     <Link
       href={`/places/${place.id}`}
-      className="block rounded-2xl border border-amber-200/70 bg-white p-4 shadow-sm transition-shadow hover:shadow-md dark:border-amber-900/40 dark:bg-[#2a2019]"
+      className="block rounded-2xl border border-stone-200/70 bg-white p-4 shadow-sm transition-all duration-150 hover:-translate-y-0.5 hover:border-teal-300 hover:shadow-lg dark:border-stone-700/60 dark:bg-[#163431] dark:hover:border-teal-700"
     >
       <div className="flex items-start justify-between gap-2">
         <div>

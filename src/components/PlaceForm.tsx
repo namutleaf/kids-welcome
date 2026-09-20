@@ -182,7 +182,7 @@ export default function PlaceForm({ defaultNeighborhoodId }: { defaultNeighborho
                     <span key={n.id} data-first-option={j === 0 ? "" : undefined}>
                       <WizardOption
                         selected={draft.neighborhoodId === n.id}
-                        label={n.name}
+                        label={`${n.icon} ${n.name}`}
                         hint={n.tagline}
                         onSelect={() => update("neighborhoodId", n.id)}
                       />
@@ -209,7 +209,7 @@ export default function PlaceForm({ defaultNeighborhoodId }: { defaultNeighborho
                     value={draft[s.key]}
                     onChange={(e) => update(s.key, e.target.value)}
                     placeholder={s.placeholder}
-                    className="mt-5 w-full rounded-xl border-2 border-stone-200 bg-white px-4 py-3 text-base dark:border-stone-700 dark:bg-[#2a2019]"
+                    className="mt-5 w-full rounded-xl border-2 border-stone-200 bg-white px-4 py-3 text-base dark:border-stone-700 dark:bg-[#163431]"
                   />
                 ) : (
                   <input
@@ -219,7 +219,7 @@ export default function PlaceForm({ defaultNeighborhoodId }: { defaultNeighborho
                     value={draft[s.key]}
                     onChange={(e) => update(s.key, e.target.value)}
                     placeholder={s.placeholder}
-                    className="mt-5 w-full rounded-xl border-2 border-stone-200 bg-white px-4 py-3 text-base dark:border-stone-700 dark:bg-[#2a2019]"
+                    className="mt-5 w-full rounded-xl border-2 border-stone-200 bg-white px-4 py-3 text-base dark:border-stone-700 dark:bg-[#163431]"
                   />
                 )}
                 {s.required ? (
@@ -258,7 +258,7 @@ export default function PlaceForm({ defaultNeighborhoodId }: { defaultNeighborho
                       value={draft[s.noteKey]}
                       onChange={(e) => update(s.noteKey!, e.target.value)}
                       placeholder={s.notePlaceholder}
-                      className="w-full rounded-xl border-2 border-stone-200 bg-white px-4 py-3 text-sm dark:border-stone-700 dark:bg-[#2a2019]"
+                      className="w-full rounded-xl border-2 border-stone-200 bg-white px-4 py-3 text-sm dark:border-stone-700 dark:bg-[#163431]"
                     />
                   </div>
                 ) : null}
@@ -292,7 +292,7 @@ export default function PlaceForm({ defaultNeighborhoodId }: { defaultNeighborho
             key="submit"
             type="submit"
             disabled={pending}
-            className="w-full rounded-full bg-amber-500 px-4 py-3.5 text-base font-semibold text-white hover:bg-amber-600 disabled:opacity-60"
+            className="w-full rounded-full bg-teal-500 px-4 py-3.5 text-base font-semibold text-white hover:bg-teal-600 disabled:opacity-60"
           >
             {pending ? "등록 중..." : "장소 등록하기"}
           </button>
@@ -306,7 +306,7 @@ export default function PlaceForm({ defaultNeighborhoodId }: { defaultNeighborho
             }}
             disabled={!isValid}
             data-testid="wizard-next"
-            className="w-full rounded-full bg-amber-500 px-4 py-3.5 text-base font-semibold text-white hover:bg-amber-600 disabled:cursor-not-allowed disabled:opacity-40"
+            className="w-full rounded-full bg-teal-500 px-4 py-3.5 text-base font-semibold text-white hover:bg-teal-600 disabled:cursor-not-allowed disabled:opacity-40"
           >
             다음
           </button>

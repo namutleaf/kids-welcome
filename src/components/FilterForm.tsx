@@ -27,18 +27,18 @@ export default function FilterForm({
     <form
       method="GET"
       action={`/neighborhoods/${neighborhoodId}`}
-      className="flex flex-wrap items-center gap-2 rounded-2xl border border-amber-200/70 bg-white/70 p-3 dark:border-amber-900/40 dark:bg-[#2a2019]/70"
+      className="flex flex-wrap items-center gap-2 rounded-2xl border border-teal-200/70 bg-white/70 p-3 dark:border-teal-900/40 dark:bg-[#163431]/70"
     >
       {FILTER_OPTIONS.map((option) => (
         <label
           key={option.key}
-          className="flex items-center gap-1.5 rounded-full border border-amber-200 bg-white px-3 py-1.5 text-sm text-stone-700 has-[:checked]:border-amber-500 has-[:checked]:bg-amber-50 has-[:checked]:text-amber-800 dark:border-amber-900/50 dark:bg-[#221a14] dark:text-stone-300 dark:has-[:checked]:bg-amber-950/50"
+          className="flex items-center gap-1.5 rounded-full border border-teal-200 bg-white px-3 py-1.5 text-sm text-stone-700 has-[:checked]:border-teal-500 has-[:checked]:bg-teal-50 has-[:checked]:text-teal-800 dark:border-teal-900/50 dark:bg-[#102220] dark:text-stone-300 dark:has-[:checked]:bg-teal-950/50"
         >
           <input
             type="checkbox"
             name={option.key}
             defaultChecked={filters[option.key]}
-            className="accent-amber-600"
+            className="accent-teal-600"
           />
           <span aria-hidden>{option.icon}</span>
           {option.label}
@@ -46,7 +46,7 @@ export default function FilterForm({
       ))}
       <button
         type="submit"
-        className="rounded-full bg-amber-500 px-4 py-1.5 text-sm font-semibold text-white hover:bg-amber-600"
+        className="rounded-full bg-teal-500 px-4 py-1.5 text-sm font-semibold text-white hover:bg-teal-600"
       >
         필터 적용
       </button>
