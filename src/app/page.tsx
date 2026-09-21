@@ -33,6 +33,18 @@ export default async function HomePage() {
             우리 동네 장소 제보하기
           </Link>
         </div>
+
+        <div className="mt-5 flex flex-wrap items-center justify-center gap-2">
+          {neighborhoods.map((n) => (
+            <Link
+              key={n.id}
+              href={`/neighborhoods/${n.id}`}
+              className="rounded-full bg-teal-50 px-3 py-1.5 text-sm font-semibold text-teal-700 transition-colors hover:bg-teal-100 dark:bg-teal-950/40 dark:text-teal-300 dark:hover:bg-teal-900/60"
+            >
+              #{n.name}
+            </Link>
+          ))}
+        </div>
       </section>
 
       <section className="mt-12">
