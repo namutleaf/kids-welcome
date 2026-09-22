@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import StarRating from "@/components/StarRating";
 import Badge from "@/components/Badge";
+import MapLinks from "@/components/MapLinks";
 import { getAllBadges } from "@/lib/badges";
 import { getNeighborhoodById } from "@/lib/neighborhoods";
 import { getPlaceById, getReviewsByPlace } from "@/lib/queries";
@@ -56,6 +57,11 @@ export default async function PlaceDetailPage({ params }: PageProps<"/places/[id
             {badge.label}
           </Badge>
         ))}
+      </div>
+
+      <div className="mt-4">
+        <p className="mb-2 text-xs font-semibold text-stone-500">🗺️ 지도에서 보기</p>
+        <MapLinks name={place.name} address={place.address} />
       </div>
 
       {place.description ? (
