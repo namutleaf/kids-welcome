@@ -1,12 +1,46 @@
 "use server";
 
+import { createHash, timingSafeEqual } from "node:crypto";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { getDb } from "./db";
 import { NEIGHBORHOODS } from "./neighborhoods";
+import { findSimilarPlaces } from "./queries";
+import { normalizePlaceName } from "./similarity";
 
 const neighborhoodIds = NEIGHBORHOODS.map((n) => n.id) as [string, ...string[]];
+
+export interface SimilarPlace {
+  id: number;
+  name: string;
+  category: string;
+  address: string;
+  reviewCount: number;
+}
+
+const similarQuerySchema = z.object({
+  neighborhoodId: z.enum(neighborhoodIds),
+  name: z.string().trim().min(1).max(80),
+});
+
+export async function checkSimilarPlaces(
+  neighborhoodId: string,
+  name: string
+): Promise<SimilarPlace[]> {
+  const parsed = similarQuerySchema.safeParse({ neighborhoodId, name });
+  if (!parsed.success) return [];
+
+  return findSimilarPlaces(parsed.data.neighborhoodId, parsed.data.name)
+    .slice(0, 5)
+    .map((p) => ({
+      id: p.id,
+      name: p.name,
+      category: p.category,
+      address: p.address,
+      reviewCount: p.reviewCount,
+    }));
+}
 
 const placeSchema = z.object({
   neighborhoodId: z.enum(neighborhoodIds, {
@@ -29,6 +63,7 @@ const placeSchema = z.object({
 
 export interface PlaceFormState {
   error?: string;
+  duplicatePlaceId?: number;
 }
 
 export async function createPlace(
@@ -44,6 +79,17 @@ export async function createPlace(
 
   const data = parsed.data;
   const db = getDb();
+
+  const normalized = normalizePlaceName(data.name);
+  const exactDuplicate = findSimilarPlaces(data.neighborhoodId, data.name).find(
+    (p) => normalizePlaceName(p.name) === normalized
+  );
+  if (exactDuplicate) {
+    return {
+      error: `이 동네에 '${exactDuplicate.name}'이(가) 이미 등록돼 있어요. 다른 곳이라면 지점명 등으로 이름을 구분해주세요.`,
+      duplicatePlaceId: exactDuplicate.id,
+    };
+  }
 
   const info = db
     .prepare(
@@ -133,4 +179,96 @@ export async function createReview(
 
   revalidatePath(`/places/${data.placeId}`);
   redirect(`/places/${data.placeId}`);
+}
+
+export interface MergeFormState {
+  error?: string;
+}
+
+const mergeSchema = z
+  .object({
+    keepId: z.coerce.number().int().positive(),
+    removeId: z.coerce.number().int().positive(),
+    password: z.string(),
+  })
+  .refine((d) => d.keepId !== d.removeId, { message: "서로 다른 두 장소를 골라주세요." });
+
+function passwordMatches(input: string, expected: string): boolean {
+  const a = createHash("sha256").update(input).digest();
+  const b = createHash("sha256").update(expected).digest();
+  return timingSafeEqual(a, b);
+}
+
+interface MergeRow {
+  id: number;
+  neighborhood_id: string;
+  address: string;
+  description: string;
+  activities: string;
+  kids_chair: string;
+  kids_food: string;
+  kids_food_note: string;
+  parking: string;
+  parking_note: string;
+}
+
+export async function mergePlaces(
+  _prevState: MergeFormState,
+  formData: FormData
+): Promise<MergeFormState> {
+  const adminPassword = process.env.ADMIN_PASSWORD;
+  if (!adminPassword) {
+    return { error: "서버에 ADMIN_PASSWORD가 설정돼 있지 않아 병합할 수 없어요." };
+  }
+
+  const parsed = mergeSchema.safeParse(Object.fromEntries(formData.entries()));
+  if (!parsed.success) {
+    return { error: parsed.error.issues[0]?.message ?? "입력값을 확인해주세요." };
+  }
+  const { keepId, removeId, password } = parsed.data;
+
+  if (!passwordMatches(password, adminPassword)) {
+    return { error: "관리자 비밀번호가 맞지 않아요." };
+  }
+
+  const db = getDb();
+  const select = db.prepare(`SELECT * FROM places WHERE id = @id`);
+  const keep = select.get({ id: keepId }) as MergeRow | undefined;
+  const remove = select.get({ id: removeId }) as MergeRow | undefined;
+  if (!keep || !remove) {
+    return { error: "존재하지 않는 장소가 있어요." };
+  }
+
+  const fillText = (a: string, b: string) => (a.trim() ? a : b);
+  const fillUnknown = (a: string, b: string) => (a === "unknown" ? b : a);
+
+  db.transaction(() => {
+    db.prepare(`UPDATE reviews SET place_id = @keepId WHERE place_id = @removeId`).run({
+      keepId,
+      removeId,
+    });
+    db.prepare(
+      `
+      UPDATE places SET
+        address = @address, description = @description, activities = @activities,
+        kids_chair = @kidsChair, kids_food = @kidsFood, kids_food_note = @kidsFoodNote,
+        parking = @parking, parking_note = @parkingNote
+      WHERE id = @id
+      `
+    ).run({
+      id: keepId,
+      address: fillText(keep.address, remove.address),
+      description: fillText(keep.description, remove.description),
+      activities: fillText(keep.activities, remove.activities),
+      kidsChair: fillUnknown(keep.kids_chair, remove.kids_chair),
+      kidsFood: fillUnknown(keep.kids_food, remove.kids_food),
+      kidsFoodNote: fillText(keep.kids_food_note, remove.kids_food_note),
+      parking: fillUnknown(keep.parking, remove.parking),
+      parkingNote: fillText(keep.parking_note, remove.parking_note),
+    });
+    db.prepare(`DELETE FROM places WHERE id = @id`).run({ id: removeId });
+  })();
+
+  revalidatePath("/", "layout");
+  redirect(`/admin/duplicates?merged=${keepId}`);
 }

@@ -1,5 +1,6 @@
 import { getDb } from "./db";
 import { NEIGHBORHOODS } from "./neighborhoods";
+import { arePlaceNamesSimilar } from "./similarity";
 import { Neighborhood, Place, PlaceWithStats, Review } from "./types";
 
 interface PlaceRow {
@@ -144,6 +145,33 @@ export function getPlacesByNeighborhood(
 
 export function searchPlaces(filters: PlaceFilters = {}): PlaceWithStats[] {
   return queryPlaces(undefined, filters);
+}
+
+export function findSimilarPlaces(neighborhoodId: string, name: string): PlaceWithStats[] {
+  return queryPlaces(neighborhoodId, {}).filter((p) => arePlaceNamesSimilar(p.name, name));
+}
+
+export function findDuplicatePairs(): [PlaceWithStats, PlaceWithStats][] {
+  const byNeighborhood = new Map<string, PlaceWithStats[]>();
+  for (const place of queryPlaces(undefined, {})) {
+    const list = byNeighborhood.get(place.neighborhoodId) ?? [];
+    list.push(place);
+    byNeighborhood.set(place.neighborhoodId, list);
+  }
+
+  const pairs: [PlaceWithStats, PlaceWithStats][] = [];
+  for (const list of byNeighborhood.values()) {
+    for (let i = 0; i < list.length; i++) {
+      for (let j = i + 1; j < list.length; j++) {
+        if (arePlaceNamesSimilar(list[i].name, list[j].name)) {
+          const [older, newer] =
+            list[i].createdAt <= list[j].createdAt ? [list[i], list[j]] : [list[j], list[i]];
+          pairs.push([older, newer]);
+        }
+      }
+    }
+  }
+  return pairs;
 }
 
 export function getPlaceById(id: number): PlaceWithStats | undefined {

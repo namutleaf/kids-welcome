@@ -1,7 +1,8 @@
 "use client";
 
+import Link from "next/link";
 import { useActionState, useEffect, useRef, useState } from "react";
-import { createPlace, PlaceFormState } from "@/lib/actions";
+import { checkSimilarPlaces, createPlace, PlaceFormState, SimilarPlace } from "@/lib/actions";
 import { NEIGHBORHOODS, getNeighborhoodById } from "@/lib/neighborhoods";
 import {
   ATMOSPHERE_LABEL,
@@ -127,11 +128,27 @@ export default function PlaceForm({ defaultNeighborhoodId }: { defaultNeighborho
     el?.focus();
   }, [step]);
 
+  const [similar, setSimilar] = useState<{ key: string; places: SimilarPlace[] }>({
+    key: "",
+    places: [],
+  });
+  const [checking, setChecking] = useState(false);
+
   const current = STEPS[step];
   const isValid = current.kind !== "text" || !current.required || draft[current.key].trim().length > 0;
+  const nameKey = `${draft.neighborhoodId}:${draft.name.trim()}`;
+  const showSimilar =
+    current.kind === "text" && current.key === "name" && similar.key === nameKey && similar.places.length > 0;
 
-  function goNext() {
-    if (!isValid) return;
+  async function goNext() {
+    if (!isValid || checking) return;
+    if (current.kind === "text" && current.key === "name" && similar.key !== nameKey) {
+      setChecking(true);
+      const places = await checkSimilarPlaces(draft.neighborhoodId, draft.name).catch(() => []);
+      setChecking(false);
+      setSimilar({ key: nameKey, places });
+      if (places.length > 0) return;
+    }
     setStep((s) => Math.min(s + 1, STEPS.length - 1));
   }
   function goBack() {
@@ -159,6 +176,11 @@ export default function PlaceForm({ defaultNeighborhoodId }: { defaultNeighborho
       {state.error ? (
         <p className="mt-4 rounded-lg bg-rose-50 px-4 py-2 text-sm text-rose-700 dark:bg-rose-950/40 dark:text-rose-300">
           {state.error}
+          {state.duplicatePlaceId ? (
+            <Link href={`/places/${state.duplicatePlaceId}`} className="ml-1 font-semibold underline">
+              등록된 장소 보기
+            </Link>
+          ) : null}
         </p>
       ) : null}
 
@@ -227,6 +249,40 @@ export default function PlaceForm({ defaultNeighborhoodId }: { defaultNeighborho
                 ) : (
                   <p className="mt-2 text-xs text-stone-400">몰라도 괜찮아요, 비워두고 넘어가도 돼요</p>
                 )}
+                {s.key === "name" && showSimilar ? (
+                  <div className="mt-5 rounded-2xl border border-yellow-300 bg-yellow-50 p-4 dark:border-yellow-900/50 dark:bg-yellow-950/30">
+                    <p className="text-sm font-bold text-stone-800 dark:text-stone-100">
+                      혹시 이미 등록된 이 곳인가요?
+                    </p>
+                    <p className="mt-0.5 text-xs text-stone-500">
+                      같은 곳이라면 새로 제보하는 대신 후기를 남겨주세요. 정보가 한곳에 모여요.
+                    </p>
+                    <ul className="mt-3 space-y-2">
+                      {similar.places.map((p) => (
+                        <li
+                          key={p.id}
+                          className="flex items-center justify-between gap-3 rounded-xl bg-white px-3 py-2.5 dark:bg-[#163431]"
+                        >
+                          <div className="min-w-0">
+                            <p className="truncate text-sm font-semibold text-stone-800 dark:text-stone-100">
+                              {p.name}
+                            </p>
+                            <p className="truncate text-xs text-stone-500">
+                              {p.category}
+                              {p.address ? ` · ${p.address}` : ""} · 후기 {p.reviewCount}개
+                            </p>
+                          </div>
+                          <Link
+                            href={`/places/${p.id}/review/new`}
+                            className="shrink-0 rounded-full bg-teal-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-teal-700"
+                          >
+                            여기에 후기 쓰기
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ) : null}
               </div>
             ) : null}
 
@@ -304,11 +360,11 @@ export default function PlaceForm({ defaultNeighborhoodId }: { defaultNeighborho
               e.preventDefault();
               goNext();
             }}
-            disabled={!isValid}
+            disabled={!isValid || checking}
             data-testid="wizard-next"
             className="w-full rounded-full bg-teal-500 px-4 py-3.5 text-base font-semibold text-white hover:bg-teal-600 disabled:cursor-not-allowed disabled:opacity-40"
           >
-            다음
+            {checking ? "확인 중..." : showSimilar ? "아니요, 다른 곳이에요" : "다음"}
           </button>
         )}
       </div>
